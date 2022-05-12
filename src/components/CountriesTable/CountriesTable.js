@@ -16,7 +16,7 @@ const orderBy = (countries, value, direction) => {
   return countries;
 };
 
-//component for sort countries
+//Arrow component for sort countries
 const SortArrow = ({ direction }) => {
   if (!direction) {
     return <></>;
