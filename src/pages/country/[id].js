@@ -2,6 +2,7 @@
 import Layout from "../../components/Layout/Layout";
 import styles from "./Country.module.css";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 //get single country
 const getCountry = async (id) => {
@@ -96,16 +97,20 @@ const Country = ({ country }) => {
               </div>
 
               <div className={styles.details_panel_borders_container}>
-                {borders.map(({ flag, name }) => (
-                  <>
+                {borders.map(({ flag, name, alpha3Code }, index) => (
+                  <div key={index}>
                     <div className={styles.details_panel_borders_country}>
-                      <img src={flag} alt={name}></img>
+                      <Link href={`/country/${alpha3Code}`}>
+                        <a>
+                          <img src={flag} alt={name}></img>
 
-                      <div className={styles.details_panel_borders_name}>
-                        {name}
-                      </div>
+                          <div className={styles.details_panel_borders_name}>
+                            {name}
+                          </div>
+                        </a>
+                      </Link>
                     </div>
-                  </>
+                  </div>
                 ))}
               </div>
             </div>
