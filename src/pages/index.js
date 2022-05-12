@@ -1,13 +1,17 @@
-import Head from "next/head";
-import Image from "next/image";
 import Layout from "../components/Layout/Layout";
+import SearchInput from "../components/SearchInput/SearchInput";
 import styles from "../styles/Home.module.css";
 
 export default function Home({ countries }) {
-  console.log(countries);
-  return <Layout>main</Layout>;
+  return (
+    <Layout>
+      <div className={styles.counts}> Found {countries.length} countries</div>
+      <SearchInput placeholder="Search by name" />
+    </Layout>
+  );
 }
 
+// This function gets called at build time on server-side.
 export const getStaticProps = async () => {
   const res = await fetch("https://restcountries.com/v2/regionalbloc/eu");
   const countries = await res.json();
