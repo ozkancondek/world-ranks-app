@@ -2,8 +2,6 @@
 import Layout from "../../components/Layout/Layout";
 import styles from "./Country.module.css";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
 
 //get single country
 const getCountry = async (id) => {
@@ -16,7 +14,6 @@ const getCountry = async (id) => {
 
 const Country = ({ country }) => {
   const [borders, setBorders] = useState([]);
-  const router = useRouter();
 
   //get all border countries and set to borders
   const getBorders = async () => {
