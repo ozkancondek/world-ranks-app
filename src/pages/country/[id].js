@@ -26,6 +26,7 @@ const Country = ({ country }) => {
   };
 
   useEffect(() => {
+    console.log("renew");
     getBorders();
   }, []);
 
