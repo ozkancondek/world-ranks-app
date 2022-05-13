@@ -3,6 +3,7 @@ import Layout from "../../components/Layout/Layout";
 import styles from "./Country.module.css";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 //get single country
 const getCountry = async (id) => {
@@ -15,18 +16,21 @@ const getCountry = async (id) => {
 
 const Country = ({ country }) => {
   const [borders, setBorders] = useState([]);
+  const router = useRouter();
 
   //get all border countries and set to borders
   const getBorders = async () => {
-    const borders = await Promise.all(
-      country.borders.map((border) => getCountry(border))
-    );
-
-    setBorders(borders);
+    if (country.borders) {
+      const borders = await Promise.all(
+        country.borders?.map((border) => getCountry(border))
+      );
+      setBorders(borders);
+    } else {
+      setBorders([]);
+    }
   };
 
   useEffect(() => {
-    console.log("renew");
     getBorders();
   }, []);
 
@@ -62,21 +66,21 @@ const Country = ({ country }) => {
             <div className={styles.details_panel_row}>
               <div className={styles.details_panel_label}>Capital</div>
               <div className={styles.details_panel_value}>
-                {country.capital}
+                {country?.capital}
               </div>
             </div>
 
             <div className={styles.details_panel_row}>
               <div className={styles.details_panel_label}>Languages</div>
               <div className={styles.details_panel_value}>
-                {country.languages.map(({ name }) => name).join(", ")}
+                {country?.languages?.map(({ name }) => name).join(", ")}
               </div>
             </div>
 
             <div className={styles.details_panel_row}>
               <div className={styles.details_panel_label}>Currencies</div>
               <div className={styles.details_panel_value}>
-                {country.currencies.map(({ name }) => name).join(", ")}
+                {country?.currencies?.map(({ name }) => name).join(", ")}
               </div>
             </div>
 
@@ -101,15 +105,11 @@ const Country = ({ country }) => {
                 {borders.map(({ flag, name, alpha3Code }, index) => (
                   <div key={index}>
                     <div className={styles.details_panel_borders_country}>
-                      <Link href={`/country/${alpha3Code}`}>
-                        <a>
-                          <img src={flag} alt={name}></img>
+                      <img src={flag} alt={name}></img>
 
-                          <div className={styles.details_panel_borders_name}>
-                            {name}
-                          </div>
-                        </a>
-                      </Link>
+                      <div className={styles.details_panel_borders_name}>
+                        {name}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -123,10 +123,34 @@ const Country = ({ country }) => {
 };
 
 export default Country;
-export const getServerSideProps = async ({ params }) => {
-  const res = await fetch(`https://restcountries.com/v2/alpha/${params.id}`);
+// export const getServerSideProps = async ({ params }) => {
+//   const res = await fetch(`https://restcountries.com/v2/alpha/${params.id}`);
 
-  const country = await res.json();
+//   const country = await res.json();
+
+//   return {
+//     props: {
+//       country,
+//     },
+//   };
+// };
+
+export const getStaticPaths = async () => {
+  const res = await fetch("https://restcountries.com/v2/all");
+  const countries = await res.json();
+
+  const paths = countries.map((country) => ({
+    params: { id: country.alpha3Code },
+  }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
+export const getStaticProps = async ({ params }) => {
+  const country = await getCountry(params.id);
 
   return {
     props: {
